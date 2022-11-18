@@ -1,0 +1,16 @@
+{
+  "name": "asteroid-renderer",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"tests TBD\"",
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "simplex-noise": "^4.0.1"
+  }
+}
