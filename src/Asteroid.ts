@@ -14,8 +14,8 @@ import PhysicsObject from "./PhysicsObject.js";
 
 export default class Asteroid extends PhysicsObject {
     constructor(
-        type: 1 | 2 | 3,
-        args: Partial<PhysicsObject>
+        type: 1 | 2 | 3 = 3,
+        args: Partial<PhysicsObject> = {}
     ) {
         let baseSolid: Solid;
         let typeSize: number;
@@ -66,9 +66,9 @@ export default class Asteroid extends PhysicsObject {
                 ],
                 spin: 0.025 + (Math.random() * 0.025),
                 color: [
-                    150 + (Math.random() * 50),
-                    150 + (Math.random() * 50),
-                    255,
+                    180 + (Math.random() * 25),
+                    50,
+                    60,
                 ]
             }
         );

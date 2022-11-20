@@ -28,5 +28,6 @@ export default {
     width,
     centre: [ width / 2, height / 2 ],
     element: canvas,
-    context
+    context,
+    pixelRatio
 }

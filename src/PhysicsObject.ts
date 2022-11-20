@@ -79,6 +79,10 @@ export default class PhysicsObject {
                         //other.velocity = other.velocity.map(v => v * -1);
                         elasticCollision(this, other);
 
+                        this.position = this.position.map(
+                            (val, idx) => val + (this.velocity[idx] || 0)
+                        ) as Point;
+
                         other.position = other.position.map(
                             (val, idx) => val + (other.velocity[idx] || 0)
                         ) as Point;

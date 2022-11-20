@@ -6,6 +6,7 @@ import cloneSolid from './geometry/clone-solid.js';
 import cube from './geometry/platonics/cube.js';
 import { random1 } from './helpers/random.js';
 import { createNoise2D } from './vendor/simplex-noise/simplex-noise.js';
+import basicSpaceship from './geometry/spacecraft/basic-spaceship.js';
 
 
 
@@ -23,11 +24,25 @@ const gap = Math.min(height, width) / (1 + (halfcount * 2));
 
 const objects: PhysicsObject[] = [];
 
+objects.push(
+    new PhysicsObject(
+        basicSpaceship,
+        {
+            position: [0, 0, 0],
+            rotateAxis: [0, 0, 1],
+            spin: 0.01,
+            color: [0, 100, 50],
+            size: 10
+        }
+    )
+)
+
+console.log(objects[0])
 
 for (let y = -halfcount; y <= halfcount; y++) {
     for (let x = -halfcount; x <= halfcount; x++) {
         const noiseVal = noise2D(x, y);
-        console.log(noiseVal);
+        //console.log(noiseVal);
 
         if (-0.5 < noiseVal && noiseVal < 0.5) {
             continue;
@@ -97,8 +112,8 @@ function drawOne(thing: PhysicsObject) {
     
     projection.forEach(
         facePoints => {
-            context.strokeStyle = `rgba(${color[0]},${color[1]},${color[2]},0.7)`;
-            context.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},0.3)`;
+            context.strokeStyle = `hsla(${color[0]},${color[1]}%,${color[2]}%,0.7)`;
+            context.fillStyle = `hsla(${color[0]},${color[1]}%,${color[2]}%,0.3)`;
 
             context.beginPath();
 
