@@ -1,10 +1,11 @@
 import cloneSolid from "./geometry/clone-solid.js";
-import { Angle, Face, Point, Solid } from "./geometry/geometry";
+import { Angle, Face, FaceProjection, Point, Solid } from "./geometry/geometry";
 import rotatePoint from "./geometry/rotate-point.js";
 import scalePoint from "./geometry/scale-point.js";
 import project3d from './geometry/3d-projection.js';
 import { createQuaternion, Quaternion, rotateByQuaternion } from "./geometry/quaternions.js";
 import elasticCollision from "./geometry/elastic-collision.js";
+import Canvas from "./canvas.js";
 
 export default class PhysicsObject {
     position: Point
@@ -116,13 +117,28 @@ export default class PhysicsObject {
         return result;
     }
 
-    get projection(): Array<Array<[number, number]>> {
+    /* get projection(): Array<Array<[number, number]>> {
         const { geometry: { faces, points } } = this;
 
         return faces.map(
             facePoints => facePoints.map(
                 pointIdx => project3d(points[pointIdx]) as [number, number]
             ) as [number, number][]
+        );
+    } */
+
+    projectToCanvas(
+        canvas: Canvas
+    ): Array<FaceProjection> {
+        const { geometry: { faces, points } } = this;
+
+        return faces.map(
+            facePoints => facePoints.map(
+                pointIdx => project3d(
+                    points[pointIdx],
+                    canvas
+                )
+            )
         );
     }
 }

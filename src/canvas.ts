@@ -1,33 +1,38 @@
-const canvas = document.getElementById('maincanvas') as HTMLCanvasElement | null;
+export default class Canvas {
+    element: HTMLCanvasElement
+    context: CanvasRenderingContext2D
 
-if (!canvas) {
-    throw new Error('Failed to initialise: no DOM target');
-}
+    height: number
+    width: number
+    centre: [number, number]
 
-const pixelRatio = window.devicePixelRatio;
+    pixelRatio: number
 
-const height = canvas.offsetHeight * pixelRatio;
-const width = canvas.offsetWidth * pixelRatio;
+    constructor(
+        target: HTMLCanvasElement | string
+    ) {
+        if (typeof target === 'string') {
+            this.element = document.querySelector(target);
+        } else {
+            this.element = target;
+        }
 
-canvas.height = height;
-canvas.width = width;
-canvas.style.transform = `scale: ${ 1 / pixelRatio }`;
+        if (!this.element) {
+            throw new Error('Unable to intialise Canvas: invalid target');
+        }
 
-// TODO: handle canvas resizing
+        this.width = this.element.offsetWidth;
+        this.height = this.element.offsetHeight;
+        this.centre = [this.width / 2, this.height / 2];
 
+        this.pixelRatio = window.devicePixelRatio;
 
-const context = canvas.getContext('2d');
+        this.context = this.element.getContext('2d');
 
-if (!context) {
-    throw new Error('Failed to initialise: no drawing context');
-}
-
-
-export default {
-    height,
-    width,
-    centre: [ width / 2, height / 2 ],
-    element: canvas,
-    context,
-    pixelRatio
+        // set up the canvas to use ratio for better graphics
+        // NOTE: remember to also multiply when using draw commands
+        this.element.width = this.width * this.pixelRatio;
+        this.element.height = this.height * this.pixelRatio;
+        this.element.style.transform = `scale: ${ 1 / this.pixelRatio }`;
+    }
 }

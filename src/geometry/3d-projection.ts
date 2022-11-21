@@ -1,9 +1,6 @@
-import { Point, Angle } from './geometry';
+import Canvas from '../canvas';
+import { FaceProjection, Point } from './geometry';
 
-import canvas from '../canvas.js';
-
-const { centre: [centreX, centreY]
-    , pixelRatio } = canvas;
 
 const cos30 = Math.cos(Math.PI / 6),
     cos60 = Math.cos(Math.PI / 3);
@@ -11,9 +8,14 @@ const cos30 = Math.cos(Math.PI / 6),
 const scale = 2;
 
 export default function project3d(
-    point: Point
-): [number, number] {
+    point: Point,
+    canvas: Canvas
+): FaceProjection[0] {
     // https://en.wikipedia.org/wiki/3D_projection#Perspective_projection
+    const {
+        pixelRatio,
+        centre: [centreX, centreY]
+    } = canvas;
 
     const [ax, ay, az] = point;
 
@@ -21,6 +23,7 @@ export default function project3d(
 
     return [
         pixelRatio * (scale / zScale) * ((-1 * cos30 * ax) + (cos30 * ay)) + centreX,
-        pixelRatio * (scale / zScale) * ((-1 * cos60 * ax) + (-1 * cos60 * ay) - az) + centreY
+        pixelRatio * (scale / zScale) * ((-1 * cos60 * ax) + (-1 * cos60 * ay) - az) + centreY,
+        ax + ay - az // viewline distance
     ];
 }
