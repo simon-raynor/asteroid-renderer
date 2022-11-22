@@ -22,8 +22,8 @@ export default function project3d(
     const zScale = 1;
 
     return [
-        centreX - (pixelRatio * (scale / zScale) * ((-1 * cos30 * ax) + (cos30 * ay))),
-        pixelRatio * (scale / zScale) * ((-1 * cos60 * ax) + (-1 * cos60 * ay) - az) + centreY,
+        pixelRatio * (centreX - (scale / zScale) * ((-1 * cos30 * ax) + (cos30 * ay))),
+        pixelRatio * ((scale / zScale) * ((-1 * cos60 * ax) + (-1 * cos60 * ay) - az) + centreY),
         ax + ay - az // viewline distance
     ];
 }

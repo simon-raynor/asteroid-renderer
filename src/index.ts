@@ -49,39 +49,6 @@ objects.push(
 );
 
 
-element.addEventListener(
-    'pointerdown',
-    evt => {
-        const {
-            pageX,
-            pageY
-        } = evt;
-
-        console.log(pageX, pageY);
-
-        objects.push(
-            new Asteroid(
-                3,
-                {
-                    position: [
-                        pageX,
-                        pageY,
-                        1
-                    ],
-                    velocity: [
-                        0.1 * random1(),
-                        0.1 * random1(),
-                        0
-                    ],
-                    size: 8 + (2 * random1()),
-                    color: [0, 100, 50]
-                }
-            )
-        );
-    }
-)
-
-
 for (let y = -halfcount; y <= halfcount; y++) {
     for (let x = -halfcount; x <= halfcount; x++) {
         const noiseVal = noise2D(x, y);
@@ -113,8 +80,6 @@ for (let y = -halfcount; y <= halfcount; y++) {
 }
 
 
-
-let t = 0;
 
 function tick() {
     const projections = tickAndSortProjections(objects);
@@ -159,16 +124,16 @@ function calculateViewportDistance(face: FaceProjection) {
 function draw(
     projections: Array<FaceProjection>
 ) {
-    context.clearRect(0, 0, width, height);
+    context.clearRect(0, 0, width * pixelRatio, height * pixelRatio);
     context.drawImage(backgroundCanvas.element, 0, 0);
 
-    context.lineWidth = 1;
+    context.lineWidth = 1.5;
     context.lineJoin = 'round';
     
     projections.forEach(
         projection => {
-            context.strokeStyle = `hsla(100,50%,40%,1)`;
-            context.fillStyle = `hsla(100,50%,30%,1)`;
+            context.strokeStyle = `hsla(10,70%,80%,0.5)`;
+            context.fillStyle = `hsla(10,70%,40%,0.5)`;
 
             context.beginPath();
 

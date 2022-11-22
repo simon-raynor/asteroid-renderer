@@ -53,7 +53,7 @@ function drawGrid(canvas: Canvas, size: number) {
     for (let y = -10; y <= 10; y++) {
         for (let x = -10; x <= 10; x++) {
             // draw coordinate text
-            const [tx, ty] = project3d([(x * size) - 4, (y * size) + 4, 0], canvas);
+            const [tx, ty] = project3d([(x * size) + 4, (y * size) - 4, 0], canvas);
 
             context.translate(tx, ty);
             context.scale(2 * pixelRatio, pixelRatio);
