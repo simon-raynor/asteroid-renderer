@@ -8,6 +8,7 @@ import { createNoise2D } from './vendor/simplex-noise/simplex-noise.js';
 import basicSpaceship from './geometry/spacecraft/basic-spaceship.js';
 import Canvas from './canvas.js';
 import { FaceProjection } from './geometry/geometry.js';
+import getBackground from './background.js';
 
 
 
@@ -24,7 +25,11 @@ const { element
     , centre: [centreX, centreY] } = canvas;
 
 const halfcount = 5;
-const gap = Math.min(height, width) / (1 + (halfcount * 2));
+const gap = Math.ceil(Math.min(height, width) / (1 + (halfcount * 2)));
+
+const backgroundCanvas = getBackground(canvas);
+
+
 
 
 const objects: PhysicsObject[] = [];
@@ -38,7 +43,7 @@ objects.push(
             spin: 0.01,
             color: [0, 100, 50],
             size: 10,
-            velocity: [1, 0, 0]
+            velocity: [0, 0, 0]
         }
     )
 );
@@ -64,8 +69,8 @@ element.addEventListener(
                         1
                     ],
                     velocity: [
-                        0.2 * random1(),
-                        0.2 * random1(),
+                        0.1 * random1(),
+                        0.1 * random1(),
                         0
                     ],
                     size: 8 + (2 * random1()),
@@ -82,7 +87,7 @@ for (let y = -halfcount; y <= halfcount; y++) {
         const noiseVal = noise2D(x, y);
         //console.log(noiseVal);
 
-        if (-0.25 < noiseVal && noiseVal < 0.25) {
+        if (-0.333 < noiseVal && noiseVal < 0.333) {
             continue;
         }
 
@@ -91,13 +96,13 @@ for (let y = -halfcount; y <= halfcount; y++) {
                 3,
                 {
                     position: [
-                        (x * 40),// + (Math.random() * 75),
-                        (y * 40),// + (Math.random() * 75),
+                        (x * gap),// + (Math.random() * 75),
+                        (y * gap),// + (Math.random() * 75),
                         1
                     ],
                     velocity: [
-                        0.5 * random1(),
-                        0.5 * random1(),
+                        0.2 * random1(),
+                        0.2 * random1(),
                         0
                     ],
                     size: 8 + (2 * random1())
@@ -155,8 +160,9 @@ function draw(
     projections: Array<FaceProjection>
 ) {
     context.clearRect(0, 0, width, height);
+    context.drawImage(backgroundCanvas.element, 0, 0);
 
-    context.lineWidth = 2;
+    context.lineWidth = 1;
     context.lineJoin = 'round';
     
     projections.forEach(

@@ -1,6 +1,8 @@
 import sumOfSquares from "../helpers/sum-of-squares.js";
 import PhysicsObject from "../PhysicsObject.js";
 
+// hacked together from https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional_collision_with_two_moving_objects
+
 export default function(
     object1: PhysicsObject,
     object2: PhysicsObject
@@ -44,4 +46,7 @@ export default function(
 
     object2.velocity[0] = object2X;
     object2.velocity[1] = object2Y;
+
+    // TODO: move the objects away from each other
+
 }

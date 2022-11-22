@@ -6,6 +6,7 @@ import project3d from './geometry/3d-projection.js';
 import { createQuaternion, Quaternion, rotateByQuaternion } from "./geometry/quaternions.js";
 import elasticCollision from "./geometry/elastic-collision.js";
 import Canvas from "./canvas.js";
+import sumOfSquares from "./helpers/sum-of-squares.js";
 
 export default class PhysicsObject {
     position: Point
@@ -66,29 +67,11 @@ export default class PhysicsObject {
                 
                 const [dx, dy, dz] = [ax - bx, ay - by, az - bz];
 
-                if (
-                    ((dx * dx) + (dy * dy) + (dz * dz))
-                    <
-                    (this.size * this.size) + (other.size * other.size)
-                ) {
-                    /* if (this.size > other.size) {
-                        other.position = null;
-                    } else if (other.size > this.size) {
-                        throw new Error('collision');
-                    } else { */
-                        //this.velocity = this.velocity.map(v => v * -1);
-                        //other.velocity = other.velocity.map(v => v * -1);
-                        elasticCollision(this, other);
+                const distance = sumOfSquares(dx, dy, dz);
+                const minDistance = (this.size * this.size) + (other.size * other.size);
 
-                        this.position = this.position.map(
-                            (val, idx) => val + (this.velocity[idx] || 0)
-                        ) as Point;
-
-                        other.position = other.position.map(
-                            (val, idx) => val + (other.velocity[idx] || 0)
-                        ) as Point;
-                        //throw('break');
-                    //}
+                if ( distance < minDistance ) {
+                    elasticCollision(this, other);
                 }
             }
         );
@@ -116,16 +99,6 @@ export default class PhysicsObject {
 
         return result;
     }
-
-    /* get projection(): Array<Array<[number, number]>> {
-        const { geometry: { faces, points } } = this;
-
-        return faces.map(
-            facePoints => facePoints.map(
-                pointIdx => project3d(points[pointIdx]) as [number, number]
-            ) as [number, number][]
-        );
-    } */
 
     projectToCanvas(
         canvas: Canvas
