@@ -1,5 +1,6 @@
+import PhysicsObject from "../../PhysicsObject.js";
 import cloneSolid from "../clone-solid.js";
-import { Solid } from "../geometry.js";
+import { Point, Solid } from "../geometry.js";
 import tetrahedron from "../platonics/tetrahedron.js";
 
 
@@ -11,7 +12,7 @@ const points = [
     // wingtips
     [-0.9, 1, -1/6],
     [-0.9, -1, -1/6]
-];
+] as Point[];
 
 const extraFaces = [
     [0, 1, 4],
@@ -22,11 +23,11 @@ const extraFaces = [
 
 const baseSolid = cloneSolid(tetrahedron);
 
+baseSolid.points = points.slice();
 baseSolid.faces.push(...extraFaces);
 
-const basicSpaceship = {
-    ...baseSolid,
-    points: points.slice()
-} as Solid;
-
-export default basicSpaceship;
+export default class BasicSpaceship extends PhysicsObject {
+    constructor(args: Partial<BasicSpaceship>) {
+        super(baseSolid, args);
+    }
+}

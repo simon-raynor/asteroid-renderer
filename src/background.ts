@@ -25,14 +25,14 @@ export default function getBackground(maincanvas: Canvas) {
 const starNoise = createNoise2D();
 
 function drawStars(canvas: Canvas) {
-    const { context, height, width } = canvas;
+    const { pixelRatio, context, height, width } = canvas;
 
     context.fillStyle = 'white';
 
-    for (let x = 0; x <= width; x++) {
-        for (let y = 0; y <= height; y++) {
+    for (let x = 0; x <= width * pixelRatio; x += pixelRatio) {
+        for (let y = 0; y <= height * pixelRatio; y += pixelRatio) {
             if (starNoise(x, y) > 0.95) {
-                context.fillRect(x - 0.5, y - 0.5, 0.5, 0.5);
+                context.fillRect((x - 0.5) * pixelRatio, (y - 0.5) * pixelRatio, pixelRatio, pixelRatio);
             }
         }
     }
@@ -53,11 +53,11 @@ function drawGrid(canvas: Canvas, size: number) {
     for (let y = -10; y <= 10; y++) {
         for (let x = -10; x <= 10; x++) {
             // draw coordinate text
-            const [tx, ty] = project3d([(x * size) + 4, (y * size) - 4, 0], canvas);
+            const [tx, ty] = project3d([(x * size) + 4, (y * size) + 4, 0], canvas);
 
             context.translate(tx, ty);
             context.scale(2 * pixelRatio, pixelRatio);
-            context.rotate(Math.PI / 4);
+            context.rotate(-Math.PI / 4);
 
             context.fillText(`${x * size},${y * size}`, 0, 0);
 

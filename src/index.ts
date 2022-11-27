@@ -1,15 +1,15 @@
 import PhysicsObject from './PhysicsObject.js';
 import Asteroid from './Asteroid.js';
-import project3d from './geometry/3d-projection.js';
-import cloneSolid from './geometry/clone-solid.js';
-import cube from './geometry/platonics/cube.js';
 import { random1 } from './helpers/random.js';
 import { createNoise2D } from './vendor/simplex-noise/simplex-noise.js';
 import basicSpaceship from './geometry/spacecraft/basic-spaceship.js';
 import Canvas from './canvas.js';
 import { FaceProjection } from './geometry/geometry.js';
 import getBackground from './background.js';
-
+import { reverseProject } from './geometry/3d-projection.js';
+import MarkTwo from './geometry/spacecraft/mark-two.js';
+import BasicSpaceship from './geometry/spacecraft/basic-spaceship.js';
+import cube from './geometry/platonics/cube.js';
 
 
 const noise2D = createNoise2D();
@@ -17,35 +17,62 @@ const noise2D = createNoise2D();
 
 const canvas = new Canvas('#maincanvas');
 
-const { element
-    , context
+const { context
     , height
     , width
-    , pixelRatio
-    , centre: [centreX, centreY] } = canvas;
+    , pixelRatio } = canvas;
 
-const halfcount = 5;
-const gap = Math.ceil(Math.min(height, width) / (1 + (halfcount * 2)));
+const halfcount = 10;
+const gap = 20;
 
 const backgroundCanvas = getBackground(canvas);
 
+
+
+canvas.element.addEventListener(
+    'pointerdown',
+    ({pageX, pageY}) => {
+        console.log(
+            [pageX - canvas.centre[0], pageY - canvas.centre[1]],
+            reverseProject([pageX, pageY], canvas)
+        );
+        objects.push(
+            new PhysicsObject(
+                cube,
+                {
+                    position: reverseProject([pageX, pageY], canvas),
+                    size: 2,
+                    color: 'orange',
+                    velocity: [0, 0, 0],
+                    rotateAxis: [1, 1, 1],
+                    spin: 0.1
+                }
+            )
+            /* new BasicSpaceship({
+                position: reverseProject([pageX, pageY], canvas),
+                rotateAxis: [0, 0, 1],
+                spin: 0.01,
+                color: 'blue',
+                size: 10,
+                velocity: [0, 0, 0]
+            }) */
+        );console.log(objects)
+    }
+)
 
 
 
 const objects: PhysicsObject[] = [];
 
 objects.push(
-    new PhysicsObject(
-        basicSpaceship,
-        {
-            position: [0, 0, 0],
-            rotateAxis: [0, 0, 1],
-            spin: 0.01,
-            color: [0, 100, 50],
-            size: 10,
-            velocity: [0, 0, 0]
-        }
-    )
+    new MarkTwo({
+        position: [0, 0, 0],
+        rotateAxis: [0, 0, 1],
+        spin: 0.01,
+        color: 'red',
+        size: 4,
+        velocity: [0, 0, 0]
+    })
 );
 
 
@@ -54,28 +81,23 @@ for (let y = -halfcount; y <= halfcount; y++) {
         const noiseVal = noise2D(x, y);
         //console.log(noiseVal);
 
-        if (-0.333 < noiseVal && noiseVal < 0.333) {
+        if (-0.75 < noiseVal && noiseVal < 0.75) {
             continue;
         }
 
-        objects.push(
+        /* objects.push(
             new Asteroid(
-                3,
                 {
                     position: [
                         (x * gap),// + (Math.random() * 75),
                         (y * gap),// + (Math.random() * 75),
                         1
                     ],
-                    velocity: [
-                        0.2 * random1(),
-                        0.2 * random1(),
-                        0
-                    ],
-                    size: 8 + (2 * random1())
+                    velocity: [0, 0, 0],
+                    size: 5 + random1()
                 }
             )
-        )
+        ) */
     }
 }
 
@@ -90,9 +112,6 @@ function tick() {
 }
 
 tick();
-
-
-
 
 
 function tickAndSortProjections(
@@ -114,8 +133,8 @@ function tickAndSortProjections(
     return projections.sort((a, b) => calculateViewportDistance(b) - calculateViewportDistance(a));
 }
 
-function calculateViewportDistance(face: FaceProjection) {
-    return face.reduce((total, pt) => total + pt[2], 0) / face.length;
+function calculateViewportDistance([points]: FaceProjection) {
+    return points.reduce((total, pt) => total + pt[2], 0) / points.length;
 }
 
 
@@ -127,17 +146,17 @@ function draw(
     context.clearRect(0, 0, width * pixelRatio, height * pixelRatio);
     context.drawImage(backgroundCanvas.element, 0, 0);
 
-    context.lineWidth = 1.5;
+    context.lineWidth = pixelRatio/*  * 2 */;
     context.lineJoin = 'round';
     
     projections.forEach(
-        projection => {
-            context.strokeStyle = `hsla(10,70%,80%,0.5)`;
-            context.fillStyle = `hsla(10,70%,40%,0.5)`;
+        ([points, color]) => {
+            context.strokeStyle = `hsla(0,0%,90%,0.5)`;
+            context.fillStyle = color;
 
             context.beginPath();
 
-            projection.forEach(
+            points.forEach(
                 ([x, y], idx) => {
                     if (idx) {
                         context.lineTo(x, y);
@@ -147,7 +166,7 @@ function draw(
                 }
             );
 
-            context.lineTo(projection[0][0], projection[0][1]);
+            context.closePath();
 
             context.fill();
             context.stroke();

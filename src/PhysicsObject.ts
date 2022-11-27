@@ -16,7 +16,7 @@ export default class PhysicsObject {
     rotateAxis: Point
     spin: number
     size: number
-    color: [number, number, number]
+    color: string
 
     protected _geometry: Solid
 
@@ -26,23 +26,26 @@ export default class PhysicsObject {
             position = [0, 0, 0],
             velocity = [0, 0, 0],
             angle = 0,
-            rotateAxis = [0, 0, 0],
+            rotateAxis = null,
             spin = 0,
             size = 1,
-            color = [0, 0, 250]
+            color = 'white'
         }: Partial<PhysicsObject>
     ) {
         this._geometry = cloneSolid(baseSolid);
         this.position = position.slice() as Point;
         this.velocity = velocity.slice() as number[];
         this.angle = angle;
-        this.rotateAxis = rotateAxis.slice() as Point;
         this.spin = spin;
         this.color = color;
 
-        const [rx, ry, rz] = rotateAxis;
-        const rotateAxisMagnitude = Math.sqrt((rx * rx) + (ry * ry) + (rz * rz));
-        this.rotateAxis = [rx / rotateAxisMagnitude, ry / rotateAxisMagnitude, rz / rotateAxisMagnitude];
+        if (rotateAxis) {
+            const [rx, ry, rz] = rotateAxis;
+            const rotateAxisMagnitude = Math.sqrt((rx * rx) + (ry * ry) + (rz * rz));
+            this.rotateAxis = [rx / rotateAxisMagnitude, ry / rotateAxisMagnitude, rz / rotateAxisMagnitude];
+        } else {
+            this.rotateAxis = null;
+        }
 
         // only scale once
         // TODO: YAGNI: may want inflation type effect at some point
@@ -88,10 +91,14 @@ export default class PhysicsObject {
 
         result.points = result.points.map(
             point => {
-                const rotated = rotateByQuaternion(
-                    point,
-                    createQuaternion(this.angle, this.rotateAxis)
-                );
+                let rotated = point;
+                
+                if (this.rotateAxis) {
+                    rotated = rotateByQuaternion(
+                        point,
+                        createQuaternion(this.angle, this.rotateAxis)
+                    );
+                }
 
                 return rotated.map((dim, idx) => dim + this.position[idx]) as Point;
             }
@@ -106,12 +113,15 @@ export default class PhysicsObject {
         const { geometry: { faces, points } } = this;
 
         return faces.map(
-            facePoints => facePoints.map(
-                pointIdx => project3d(
-                    points[pointIdx],
-                    canvas
-                )
-            )
+            facePoints => [
+                facePoints.map(
+                    pointIdx => project3d(
+                        points[pointIdx],
+                        canvas
+                    )
+                ),
+                this.color
+            ] as FaceProjection
         );
     }
 }
