@@ -27,12 +27,13 @@ const starNoise = createNoise2D();
 function drawStars(canvas: Canvas) {
     const { pixelRatio, context, height, width } = canvas;
 
-    context.fillStyle = 'white';
+    const starFrequency = 1 - (0.05 * pixelRatio);
 
     for (let x = 0; x <= width * pixelRatio; x += pixelRatio) {
         for (let y = 0; y <= height * pixelRatio; y += pixelRatio) {
-            if (starNoise(x, y) > 0.95) {
-                context.fillRect((x - 0.5) * pixelRatio, (y - 0.5) * pixelRatio, pixelRatio, pixelRatio);
+            if (starNoise(x, y) > starFrequency) {
+                context.fillStyle = `rgba(255,255,255,${0.25 + (Math.random() * 0.5)})`;
+                context.fillRect(x * pixelRatio, y * pixelRatio, pixelRatio, pixelRatio);
             }
         }
     }
@@ -45,8 +46,8 @@ function drawGrid(canvas: Canvas, size: number) {
     context.beginPath();
 
     context.lineWidth = 2 * pixelRatio;
-    context.strokeStyle = 'hsla(225, 50%, 50%, 0.1';
-    context.fillStyle = 'hsla(225, 50%, 50%, 0.25';
+    context.strokeStyle = 'hsla(225, 50%, 50%, 0.2)';
+    context.fillStyle = 'hsla(225, 50%, 50%, 0.333)';
 
     context.font = 'monospace';
 
