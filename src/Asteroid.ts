@@ -34,6 +34,9 @@ export default class Asteroid extends PhysicsObject {
             )
         );
 
+
+        const hue = 180 + (Math.random() * 25);
+
         super(
             baseSolid,
             {
@@ -46,7 +49,8 @@ export default class Asteroid extends PhysicsObject {
                     random1()
                 ],
                 spin: 0.025 + (Math.random() * 0.025),
-                color: `hsla(${180 + (Math.random() * 25)},75%,50%,1`
+                color: `hsla(${hue},75%,50%,1)`,
+                lineColor: `hsla(${hue},75%,33.33%,1)`
             }
         );
     }

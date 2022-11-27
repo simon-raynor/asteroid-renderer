@@ -17,6 +17,7 @@ export default class PhysicsObject {
     spin: number
     size: number
     color: string
+    lineColor: string
 
     protected _geometry: Solid
 
@@ -29,7 +30,8 @@ export default class PhysicsObject {
             rotateAxis = null,
             spin = 0,
             size = 1,
-            color = 'white'
+            color = 'white',
+            lineColor = null
         }: Partial<PhysicsObject>
     ) {
         this._geometry = cloneSolid(baseSolid);
@@ -38,6 +40,7 @@ export default class PhysicsObject {
         this.angle = angle;
         this.spin = spin;
         this.color = color;
+        this.lineColor = lineColor;
 
         if (rotateAxis) {
             const [rx, ry, rz] = rotateAxis;
@@ -120,7 +123,8 @@ export default class PhysicsObject {
                         canvas
                     )
                 ),
-                this.color
+                this.color,
+                this.lineColor
             ] as FaceProjection
         );
     }

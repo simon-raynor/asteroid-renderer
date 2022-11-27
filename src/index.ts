@@ -1,15 +1,14 @@
 import PhysicsObject from './PhysicsObject.js';
-import Asteroid from './Asteroid.js';
-import { random1 } from './helpers/random.js';
 import { createNoise2D } from './vendor/simplex-noise/simplex-noise.js';
-import basicSpaceship from './geometry/spacecraft/basic-spaceship.js';
 import Canvas from './canvas.js';
 import { FaceProjection } from './geometry/geometry.js';
 import getBackground from './background.js';
 import { reverseProject } from './geometry/3d-projection.js';
 import MarkTwo from './geometry/spacecraft/mark-two.js';
-import BasicSpaceship from './geometry/spacecraft/basic-spaceship.js';
 import cube from './geometry/platonics/cube.js';
+import { random1 } from './helpers/random.js';
+import Asteroid from './Asteroid.js';
+import sumOfSquares from './helpers/sum-of-squares.js';
 
 
 const noise2D = createNoise2D();
@@ -22,9 +21,6 @@ const { context
     , width
     , pixelRatio } = canvas;
 
-const halfcount = 10;
-const gap = 20;
-
 const backgroundCanvas = getBackground(canvas);
 
 
@@ -32,10 +28,6 @@ const backgroundCanvas = getBackground(canvas);
 canvas.element.addEventListener(
     'pointerdown',
     ({pageX, pageY}) => {
-        console.log(
-            [pageX - canvas.centre[0], pageY - canvas.centre[1]],
-            reverseProject([pageX, pageY], canvas)
-        );
         objects.push(
             new PhysicsObject(
                 cube,
@@ -48,15 +40,7 @@ canvas.element.addEventListener(
                     spin: 0.1
                 }
             )
-            /* new BasicSpaceship({
-                position: reverseProject([pageX, pageY], canvas),
-                rotateAxis: [0, 0, 1],
-                spin: 0.01,
-                color: 'blue',
-                size: 10,
-                velocity: [0, 0, 0]
-            }) */
-        );console.log(objects)
+        );
     }
 )
 
@@ -68,45 +52,24 @@ objects.push(
     new MarkTwo({
         position: [0, 0, 0],
         rotateAxis: [0, 0, 1],
-        spin: 0.01,
-        color: 'red',
+        spin: 0,
+        color: 'rgba(150,0,0,1)',
+        lineColor: 'rgba(200,0,0,1)',
         size: 4,
         velocity: [0, 0, 0]
     })
 );
 
-
-for (let y = -halfcount; y <= halfcount; y++) {
-    for (let x = -halfcount; x <= halfcount; x++) {
-        const noiseVal = noise2D(x, y);
-        //console.log(noiseVal);
-
-        if (-0.75 < noiseVal && noiseVal < 0.75) {
-            continue;
-        }
-
-        /* objects.push(
-            new Asteroid(
-                {
-                    position: [
-                        (x * gap),// + (Math.random() * 75),
-                        (y * gap),// + (Math.random() * 75),
-                        1
-                    ],
-                    velocity: [0, 0, 0],
-                    size: 5 + random1()
-                }
-            )
-        ) */
-    }
-}
-
-
+let t = 0;
 
 function tick() {
+    objects.push(...generateAsteroidWave(t));
+
     const projections = tickAndSortProjections(objects);
 
     draw(projections);
+
+    t++;
     
     window.requestAnimationFrame(tick);
 }
@@ -124,6 +87,11 @@ function tickAndSortProjections(
     // iterate backwards so that we can remove things easier
     for (let i = unticked.length - 1; i >= 0; i--) {
         const obj = unticked.pop();
+
+        if (sumOfSquares( obj.position[0], obj.position[1] ) > 810000) {
+            objects.splice( objects.indexOf(obj), 1 );
+            console.log(objects);
+        }
 
         obj.tick(unticked);
 
@@ -146,12 +114,12 @@ function draw(
     context.clearRect(0, 0, width * pixelRatio, height * pixelRatio);
     context.drawImage(backgroundCanvas.element, 0, 0);
 
-    context.lineWidth = pixelRatio/*  * 2 */;
+    context.lineWidth = pixelRatio * 1.5;
     context.lineJoin = 'round';
     
     projections.forEach(
-        ([points, color]) => {
-            context.strokeStyle = `hsla(0,0%,90%,0.5)`;
+        ([points, color, lineColor]) => {
+            context.strokeStyle = lineColor || color;
             context.fillStyle = color;
 
             context.beginPath();
@@ -175,3 +143,65 @@ function draw(
         }
     );
 }
+
+
+function generateAsteroidWave(t: number): Asteroid[] {
+    const wave = [];
+    
+    for (
+        let i = 0, n = 10;
+        i <= n;
+        i++
+    ) {
+        const noise = noise2D(i, t);
+    
+        if (noise > 0.95) {
+            const x = 50 * (i - (n/2)),
+                y = 500;
+            
+            wave.push(
+                new Asteroid({
+                    position: [ x, y, 0 ],
+                    velocity: [ random1() * 0.1, (Math.random() * -0.25) - 0.5, 0 ],
+                    size: 5
+                })
+            );
+        }
+    }
+
+    return wave;
+}
+
+
+
+/*
+
+const halfcount = 10;
+const gap = 50;
+
+for (let y = -halfcount; y <= halfcount; y++) {
+    for (let x = -halfcount; x <= halfcount; x++) {
+        const noiseVal = noise2D(x, y);
+        console.log(noiseVal);
+
+        if (noiseVal < 0.5) {
+            continue;
+        }
+
+        objects.push(
+            new Asteroid(
+                {
+                    position: [
+                        (x * gap) + (random1() * gap / 3),
+                        (y * gap) + (random1() * gap / 3),
+                        1
+                    ],
+                    velocity: [ Math.random(), -Math.random(), 0 ],
+                    size: 5 + random1()
+                }
+            )
+        )
+    }
+}
+
+*/
