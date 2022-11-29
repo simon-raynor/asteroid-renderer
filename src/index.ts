@@ -35,6 +35,7 @@ canvas.element.addEventListener(
                     position: reverseProject([pageX, pageY], canvas),
                     size: 2,
                     color: 'orange',
+                    lineColor: 'red',
                     velocity: [0, 0, 0],
                     rotateAxis: [1, 1, 1],
                     spin: 0.1
@@ -48,6 +49,12 @@ canvas.element.addEventListener(
 
 const objects: PhysicsObject[] = [];
 
+for (let i = 0; i <= 1000; i++) {
+    objects.push(...generateAsteroidWave(i));
+    objects.forEach(obj => obj.tick([]));
+}
+
+
 objects.push(
     new MarkTwo({
         position: [0, 0, 0],
@@ -59,6 +66,8 @@ objects.push(
         velocity: [0, 0, 0]
     })
 );
+
+
 
 let t = 0;
 
@@ -88,9 +97,8 @@ function tickAndSortProjections(
     for (let i = unticked.length - 1; i >= 0; i--) {
         const obj = unticked.pop();
 
-        if (sumOfSquares( obj.position[0], obj.position[1] ) > 810000) {
+        if (sumOfSquares( obj.position[0], obj.position[1] ) > 1000 * 1000) {
             objects.splice( objects.indexOf(obj), 1 );
-            console.log(objects);
         }
 
         obj.tick(unticked);
@@ -155,8 +163,8 @@ function generateAsteroidWave(t: number): Asteroid[] {
     ) {
         const noise = noise2D(i, t);
     
-        if (noise > 0.95) {
-            const x = 50 * (i - (n/2)),
+        if (noise > 0.97) {
+            const x = 100 * (i - (n/2)),
                 y = 500;
             
             wave.push(

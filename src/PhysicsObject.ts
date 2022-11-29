@@ -74,10 +74,25 @@ export default class PhysicsObject {
                 const [dx, dy, dz] = [ax - bx, ay - by, az - bz];
 
                 const distance = sumOfSquares(dx, dy, dz);
-                const minDistance = (this.size * this.size) + (other.size * other.size);
+                const minDistance = Math.pow(this.size + other.size, 2);
 
                 if ( distance < minDistance ) {
                     elasticCollision(this, other);
+
+                    /* do {
+                        this.position = this.position.map(
+                            (val, idx) => val + (this.velocity[idx] || 0)
+                        ) as Point;
+                        other.position = other.position.map(
+                            (val, idx) => val + (other.velocity[idx] || 0)
+                        ) as Point;
+                    } while (
+                        sumOfSquares(
+                            this.position[0] - bx,
+                            this.position[1] - by,
+                            this.position[2] - bz
+                        ) < minDistance
+                    ) */
                 }
             }
         );

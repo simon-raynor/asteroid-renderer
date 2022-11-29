@@ -9,12 +9,14 @@ export default function(
 ) {
     const [px1, py1] = object1.position;
     const [vx1, vy1] = object1.velocity;
+    const size1 = object1.size;
     const speed1 = Math.sqrt(sumOfSquares(vx1, vy1));
     const angle1 = vx1 ? Math.atan(vy1 / vx1) : Math.PI / 2;
     const mass1 = Math.pow(object1.size, 3);
 
     const [px2, py2] = object2.position;
     const [vx2, vy2] = object2.velocity;
+    const size2 = object2.size;
     const speed2 = Math.sqrt(sumOfSquares(vx2, vy2));
     const angle2 = vx2 ? Math.atan(vy2 / vx2) : Math.PI / 2;
     const mass2 = Math.pow(object2.size, 3);
