@@ -19,7 +19,7 @@ export default function project3d(
     point: Point,
     canvas: Canvas
 ): FaceProjection[0][0] {
-    // https://en.wikipedia.org/wiki/3D_projection#Perspective_projection
+    
     const {
         pixelRatio,
         centre: [centreX, centreY]

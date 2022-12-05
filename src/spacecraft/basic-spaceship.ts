@@ -1,7 +1,7 @@
-import PhysicsObject from "../../PhysicsObject.js";
-import cloneSolid from "../clone-solid.js";
-import { Point, Solid } from "../geometry.js";
-import tetrahedron from "../platonics/tetrahedron.js";
+import PhysicsObject from "../PhysicsObject.js";
+import cloneSolid from "../geometry/clone-solid.js";
+import { Point, Solid } from "../geometry/geometry.js";
+import tetrahedron from "../geometry/platonics/tetrahedron.js";
 
 
 const points = [

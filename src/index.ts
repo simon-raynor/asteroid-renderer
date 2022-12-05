@@ -4,11 +4,12 @@ import Canvas from './canvas.js';
 import { FaceProjection } from './geometry/geometry.js';
 import getBackground from './background.js';
 import { reverseProject } from './geometry/3d-projection.js';
-import MarkTwo from './geometry/spacecraft/mark-two.js';
+import MarkTwo from './spacecraft/mark-two.js';
 import cube from './geometry/platonics/cube.js';
 import { random1 } from './helpers/random.js';
 import Asteroid from './Asteroid.js';
 import sumOfSquares from './helpers/sum-of-squares.js';
+import ExpolodingObject from './ExplodingObject.js';
 
 
 const noise2D = createNoise2D();
@@ -25,11 +26,14 @@ const backgroundCanvas = getBackground(canvas);
 
 
 
+const objects: PhysicsObject[] = [];
+
+
 canvas.element.addEventListener(
     'pointerdown',
     ({pageX, pageY}) => {
         objects.push(
-            new PhysicsObject(
+            new ExpolodingObject(
                 cube,
                 {
                     position: reverseProject([pageX, pageY], canvas),
@@ -46,10 +50,8 @@ canvas.element.addEventListener(
 )
 
 
-
-const objects: PhysicsObject[] = [];
-
-for (let i = 0; i <= 1000; i++) {
+// pregenerate asteroid field
+for (let i = 0; i <= 5000; i++) {
     objects.push(...generateAsteroidWave(i));
     objects.forEach(obj => obj.tick([]));
 }
@@ -81,6 +83,7 @@ function tick() {
     t++;
     
     window.requestAnimationFrame(tick);
+    //setTimeout(tick, 500);
 }
 
 tick();
@@ -97,11 +100,18 @@ function tickAndSortProjections(
     for (let i = unticked.length - 1; i >= 0; i--) {
         const obj = unticked.pop();
 
+        // check out-of-bounds
         if (sumOfSquares( obj.position[0], obj.position[1] ) > 1000 * 1000) {
             objects.splice( objects.indexOf(obj), 1 );
         }
 
-        obj.tick(unticked);
+        try {
+            obj.tick(unticked);
+        } catch(ex) {
+            // TODO: check ex is expected, rethrow if not
+            console.warn(ex);
+            objects.splice( objects.indexOf(obj), 1 );
+        }
 
         projections.push(...obj.projectToCanvas(canvas));
     }
@@ -179,37 +189,3 @@ function generateAsteroidWave(t: number): Asteroid[] {
 
     return wave;
 }
-
-
-
-/*
-
-const halfcount = 10;
-const gap = 50;
-
-for (let y = -halfcount; y <= halfcount; y++) {
-    for (let x = -halfcount; x <= halfcount; x++) {
-        const noiseVal = noise2D(x, y);
-        console.log(noiseVal);
-
-        if (noiseVal < 0.5) {
-            continue;
-        }
-
-        objects.push(
-            new Asteroid(
-                {
-                    position: [
-                        (x * gap) + (random1() * gap / 3),
-                        (y * gap) + (random1() * gap / 3),
-                        1
-                    ],
-                    velocity: [ Math.random(), -Math.random(), 0 ],
-                    size: 5 + random1()
-                }
-            )
-        )
-    }
-}
-
-*/

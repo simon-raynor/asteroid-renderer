@@ -1,3 +1,4 @@
+import ExpolodingObject from "./ExplodingObject.js";
 import cloneSolid from "./geometry/clone-solid.js";
 import { Solid } from "./geometry/geometry";
 import cube from "./geometry/platonics/cube.js";
@@ -12,7 +13,7 @@ import PhysicsObject from "./PhysicsObject.js";
 
 
 
-export default class Asteroid extends PhysicsObject {
+export default class Asteroid extends ExpolodingObject {
     constructor(
         args: Partial<PhysicsObject> = {}
     ) {

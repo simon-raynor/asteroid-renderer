@@ -19,6 +19,10 @@ export default class PhysicsObject {
     color: string
     lineColor: string
 
+    health: number
+    private damageTick: boolean
+    dead: boolean
+
     protected _geometry: Solid
 
     constructor(
@@ -31,10 +35,10 @@ export default class PhysicsObject {
             spin = 0,
             size = 1,
             color = 'white',
-            lineColor = null
+            lineColor = null,
+            health = null
         }: Partial<PhysicsObject>
     ) {
-        this._geometry = cloneSolid(baseSolid);
         this.position = position.slice() as Point;
         this.velocity = velocity.slice() as number[];
         this.angle = angle;
@@ -52,14 +56,22 @@ export default class PhysicsObject {
 
         // only scale once
         // TODO: YAGNI: may want inflation type effect at some point
+        this._geometry = cloneSolid(baseSolid);
         this._geometry.points = this._geometry.points.map(pt => scalePoint(pt, size));
         this.size = size;
+
+        this.health = health || Math.pow(size, 3);
     }
 
     tick(unticked: Array<PhysicsObject>) {
         if (!this.position) {
             throw new Error('no position');
         }
+        if (this.dead) {
+            throw new Error('is dead');
+        }
+
+        this.damageTick = false;
 
         // collision detection
         unticked.forEach(
@@ -79,20 +91,8 @@ export default class PhysicsObject {
                 if ( distance < minDistance ) {
                     elasticCollision(this, other);
 
-                    /* do {
-                        this.position = this.position.map(
-                            (val, idx) => val + (this.velocity[idx] || 0)
-                        ) as Point;
-                        other.position = other.position.map(
-                            (val, idx) => val + (other.velocity[idx] || 0)
-                        ) as Point;
-                    } while (
-                        sumOfSquares(
-                            this.position[0] - bx,
-                            this.position[1] - by,
-                            this.position[2] - bz
-                        ) < minDistance
-                    ) */
+                    this.damage(other.size * other.size);
+                    other.damage(this.size * this.size);
                 }
             }
         );
@@ -138,9 +138,27 @@ export default class PhysicsObject {
                         canvas
                     )
                 ),
-                this.color,
-                this.lineColor
+                this.damageTick
+                ? 'red'
+                : this.color,
+                this.damageTick
+                ? 'darkred'
+                : this.lineColor
             ] as FaceProjection
         );
+    }
+
+    damage(amount: number) {
+        this.health -= amount;
+        this.damageTick = true;
+
+        if (!this.dead && this.health <= 0) {
+            this.die();
+        }
+    }
+
+    
+    die() {
+        this.dead = true;
     }
 }

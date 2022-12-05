@@ -1,7 +1,8 @@
-import PhysicsObject from "../../PhysicsObject.js";
-import cloneSolid from "../clone-solid.js";
-import { Point, Solid } from "../geometry.js";
-import octahedron from "../platonics/octahedron.js";
+import PhysicsObject from "../PhysicsObject.js";
+import cloneSolid from "../geometry/clone-solid.js";
+import { Point, Solid } from "../geometry/geometry.js";
+import octahedron from "../geometry/platonics/octahedron.js";
+import Spaceship from "./Spaceship.js";
 
 const points = [
     [-0.25, 0, 0.5],
@@ -27,7 +28,7 @@ const baseSolid = cloneSolid(octahedron);
 baseSolid.points = points.slice();
 baseSolid.faces.push(...extraFaces);
 
-export default class MarkTwo extends PhysicsObject {
+export default class MarkTwo extends Spaceship {
     constructor(args: Partial<MarkTwo>) {
         super(baseSolid, args);
     }
