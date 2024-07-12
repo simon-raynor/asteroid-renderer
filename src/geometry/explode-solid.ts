@@ -22,11 +22,11 @@ export default function explodeSolid(
                 [0, 0, 0]
             ).map(val => val / pts.length);
 
-            const magnitude = Math.sqrt(sumOfSquares(...centre));
+            /* const magnitude = Math.sqrt(sumOfSquares(...centre));
 
             const normalised = centre.map(
                 (val) => val / magnitude
-            )
+            ) */
 
             retVal.push(
                 {

@@ -9,7 +9,7 @@ import cube from './geometry/platonics/cube.js';
 import { random1 } from './helpers/random.js';
 import Asteroid from './Asteroid.js';
 import sumOfSquares from './helpers/sum-of-squares.js';
-import ExpolodingObject from './ExplodingObject.js';
+import ExplodingObject from './ExplodingObject.js';
 
 
 const noise2D = createNoise2D();
@@ -33,7 +33,7 @@ canvas.element.addEventListener(
     'pointerdown',
     ({pageX, pageY}) => {
         objects.push(
-            new ExpolodingObject(
+            new ExplodingObject(
                 cube,
                 {
                     position: reverseProject([pageX, pageY], canvas),

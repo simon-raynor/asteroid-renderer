@@ -4,7 +4,7 @@ import sumOfSquares from "./helpers/sum-of-squares.js";
 import PhysicsObject from "./PhysicsObject.js";
 import ThreeDeeObject from "./ThreeDeeObject.js";
 
-export default class ExpolodingObject extends ThreeDeeObject {
+export default class ExplodingObject extends ThreeDeeObject {
     protected _parts: PhysicsObject[]
     dying: number
 
